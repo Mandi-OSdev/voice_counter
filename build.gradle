@@ -1,0 +1,46 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.mandios.voicecounter'
+        minSdk 31
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    namespace 'com.mandios.voicecounter'
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.18.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
+    implementation "androidx.preference:preference-ktx:1.2.1"
+    implementation "androidx.cardview:cardview:1.0.0"
+}
