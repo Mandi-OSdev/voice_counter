@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0D0D0D">
+
+    <!-- Big Counter Number -->
+    <TextView
+        android:id="@+id/tvCounter"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="0"
+        android:textSize="160sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:fontFamily="sans-serif-light"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!--
+        Debug overlay: shown below the counter when SpeechR Debug Mode is ON.
+        Displays the last recognized phrase and its confidence score.
+    -->
+    <TextView
+        android:id="@+id/tvDebug"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#4B5563"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:fontFamily="monospace"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="80dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tvCounter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tvNoInternet" />
+
+    <!--
+        No-internet warning: shown (red, centered) above the bottom bar
+        when the device has no internet and offline mode is OFF.
+    -->
+    <TextView
+        android:id="@+id/tvNoInternet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="&#9888; No internet connection\nFix connection or go to offline mode"
+        android:textColor="#EF4444"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="42dp" />
+
+    <!-- Listening pulse dot -->
+    <View
+        android:id="@+id/listeningIndicator"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:background="@drawable/circle_indicator"
+        android:alpha="0"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Bottom Bar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:background="#1A1A1A"
+        android:paddingBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Settings Button (bottom-left) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSettings"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="&#9881; Settings"
+            android:textColor="#AAAAAA"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Listen Button (center) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnListen"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:text="&#127908; Listen"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            app:backgroundTint="#2563EB"
+            app:cornerRadius="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Reset Button (bottom-right) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReset"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="&#8634; Reset"
+            android:textColor="#AAAAAA"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
