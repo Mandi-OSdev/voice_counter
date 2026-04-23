@@ -24,6 +24,12 @@ import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.mandios.voicecounter.databinding.ActivityMainBinding
 import java.util.Locale
+import android.media.AudioTrack
+import android.media.AudioFormat
+import android.media.AudioAttributes
+import android.os.CountDownTimer
+import android.speech.tts.UtteranceProgressListener
+import kotlin.math.sin
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var prefs: SharedPreferences
 
     private var counter = 0
+    private var countdownTimer: CountDownTimer? = null
     private var isListening = false
     private val handler = Handler(Looper.getMainLooper())
     private val settingsLauncher = registerForActivityResult(
@@ -65,12 +72,24 @@ class MainActivity : AppCompatActivity() {
         counter = prefs.getInt(PREF_COUNTER, 0)
         updateCounterDisplay()
 
+
         // TTS init (async — callback sets ttsReady=true)
         tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 ttsReady = true
                 val langTag = prefs.getString("language", "en-US") ?: "en-US"
                 tts?.language = Locale.forLanguageTag(langTag)
+
+                tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {}
+                    @Deprecated("Deprecated in Java")
+                    override fun onError(utteranceId: String?) {}
+                    override fun onDone(utteranceId: String?) {
+                        if (utteranceId == "counter_result") {
+                            handler.post { startCountdownTimer() }
+                        }
+                    }
+                })
             }
         }
 
@@ -97,6 +116,11 @@ class MainActivity : AppCompatActivity() {
         val langTag = prefs.getString("language", "en-US") ?: "en-US"
         if (ttsReady) tts?.language = Locale.forLanguageTag(langTag)
 
+        // Hide countdown interface
+        if (!prefs.getBoolean("countdown_interface", false)) {
+            binding.tvCountdown.visibility = View.GONE
+        }
+
         // Start periodic network status checks
         handler.post(networkCheckRunnable)
     }
@@ -111,6 +135,7 @@ class MainActivity : AppCompatActivity() {
         stopListening()
         tts?.shutdown()
         tts = null
+        countdownTimer?.cancel()
     }
 
     // ── Utils ───────────────────────────────────────────────────────────────
@@ -332,15 +357,99 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun speakResult() {
-        if (!prefs.getBoolean("say_result", false)) return
-        if (!ttsReady) return
+        val countdown = prefs.getInt("countdown_value", 3)
+
+        if (!prefs.getBoolean("say_result", false) || !ttsReady) {
+            if (countdown > 0) startCountdownTimer()
+            return
+        }
 
         val template = prefs.getString("say_result_text", "")
             ?.takeUnless { it.isBlank() }
             ?: "Clicked %s times already"
 
         val spoken = template.replace("%s", counter.toString())
+
         tts?.speak(spoken, TextToSpeech.QUEUE_FLUSH, null, "counter_result")
+    }
+
+    private fun playBeep(frequency: Double = 360.0) {
+        val sampleRate = 44100
+        val bipMs = 120
+        val gapMs = 80
+        val bip1Samples = sampleRate * bipMs / 1000
+        val gapSamples = sampleRate * gapMs / 1000
+        val bip2Samples = sampleRate * (bipMs + 40) / 1000
+        val fadeSamples = sampleRate * 8 / 1000
+        val totalSamples = bip1Samples + gapSamples + bip2Samples
+
+        val freq1 = frequency
+        val freq2 = frequency * 1.5
+
+        fun makeBip(length: Int, freq: Double) = ShortArray(length) { i ->
+            val sine = sin(2.0 * Math.PI * freq * i / sampleRate) * 0.7 +
+                    sin(2.0 * Math.PI * freq * 2 * i / sampleRate) * 0.2 +
+                    sin(2.0 * Math.PI * freq * 3 * i / sampleRate) * 0.1
+            val env = when {
+                i < fadeSamples -> i.toDouble() / fadeSamples
+                i > length - fadeSamples -> (length - i).toDouble() / fadeSamples
+                else -> 1.0
+            }
+            (sine * env * Short.MAX_VALUE * 0.85).toInt().toShort()
+        }
+
+        val samples = ShortArray(totalSamples)
+        makeBip(bip1Samples, freq1).copyInto(samples, 0)
+        makeBip(bip2Samples, freq2).copyInto(samples, bip1Samples + gapSamples)
+
+        val track = AudioTrack.Builder()
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            .setAudioFormat(
+                AudioFormat.Builder()
+                    .setSampleRate(sampleRate)
+                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                    .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                    .build()
+            )
+            .setBufferSizeInBytes(totalSamples * 2)
+            .setTransferMode(AudioTrack.MODE_STATIC)
+            .build()
+
+        track.write(samples, 0, totalSamples)
+        track.play()
+        handler.postDelayed({ track.stop(); track.release() }, 600L)
+    }
+
+    private fun startCountdownTimer() {
+        val seconds = prefs.getInt("countdown_value", 3)
+        if (seconds <= 0) return
+
+        countdownTimer?.cancel()
+
+        if (prefs.getBoolean("countdown_interface", false)) {
+            binding.tvCountdown.visibility = View.VISIBLE
+            binding.tvCountdown.text = seconds.toString()
+        }
+
+        countdownTimer = object : CountDownTimer(seconds * 1000L, 1000L) {
+            override fun onTick(millisUntilFinished: Long) {
+                val remaining = (millisUntilFinished / 1000).toInt() + 1
+                binding.tvCountdown.text = remaining.toString()
+            }
+
+            override fun onFinish() {
+                binding.tvCountdown.visibility = View.GONE
+                binding.tvCountdown.text = ""
+                try {
+                    playBeep(prefs.getInt("beep_frequency", 360).toDouble())
+                } catch (_: Exception) {}
+            }
+        }.start()
     }
 
     // ── Stop listening ──────────────────────────────────────────────────────
@@ -350,6 +459,8 @@ class MainActivity : AppCompatActivity() {
         binding.btnListen.text = "🎤 Listen"
         binding.listeningIndicator.animate().alpha(0f).setDuration(300).start()
         binding.tvDebug.visibility = View.GONE
+        countdownTimer?.cancel()
+        binding.tvCountdown.visibility = View.GONE
         handler.removeCallbacksAndMessages(null)
         if (::speechRecognizer.isInitialized) {
             try {

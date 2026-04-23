@@ -22,10 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!--
-        Debug overlay: shown below the counter when SpeechR Debug Mode is ON.
-        Displays the last recognized phrase and its confidence score.
-    -->
+    <!--  Debug overlay  -->
     <TextView
         android:id="@+id/tvDebug"
         android:layout_width="0dp"
@@ -44,10 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/tvNoInternet" />
 
-    <!--
-        No-internet warning: shown (red, centered) above the bottom bar
-        when the device has no internet and offline mode is OFF.
-    -->
+    <!--  No Internet  -->
     <TextView
         android:id="@+id/tvNoInternet"
         android:layout_width="wrap_content"
@@ -74,17 +68,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="20dp" />
 
+    <!-- Countdown Timer Display -->
+    <TextView
+        android:id="@+id/tvCountdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#4B5563"
+        android:textSize="28sp"
+        android:fontFamily="sans-serif-light"
+        android:visibility="gone"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar" />
+
     <!-- Bottom Bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomBar"
         android:fitsSystemWindows="true"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="130dp"
         android:background="#1A1A1A"
         android:paddingBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <!-- Settings Button (bottom-left) -->
         <com.google.android.material.button.MaterialButton

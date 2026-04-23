@@ -60,14 +60,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:letterSpacing="0.15"
-            android:text="NET MODE"
+            android:text="RECOGNITION QUALITY"
             android:textColor="#6B7280"
             android:textSize="11sp" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="14dp"
             app:cardBackgroundColor="#1A1A1A"
             app:cardCornerRadius="12dp"
             app:cardElevation="0dp">
@@ -112,19 +112,6 @@
         </androidx.cardview.widget.CardView>
 
         <!-- Section: Confidence -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:letterSpacing="0.15"
-            android:text="RECOGNITION QUALITY"
-            android:textColor="#6B7280"
-            android:textSize="11sp" />
-
-        <!--
-            CardView wraps a FrameLayout so we can place a semi-transparent
-            overlay View on top — clipped to the card's own rounded corners.
-        -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardConfidence"
             android:layout_width="match_parent"
@@ -345,7 +332,6 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <!-- Текст + Switch слева -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -375,7 +361,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp" />
 
-                    <!-- Серая зона — отдельный layout, фон только здесь -->
                     <LinearLayout
                         android:id="@+id/btnSayResultArrow"
                         android:layout_width="46dp"
@@ -386,7 +371,6 @@
                         android:background="@drawable/bg_chevron_right"
                         android:paddingEnd="0dp">
 
-                        <!-- Только иконка вращается, фон остаётся на месте -->
                         <ImageView
                             android:id="@+id/ivSayResultChevron"
                             android:layout_width="32dp"
@@ -410,7 +394,6 @@
                     android:clipChildren="true"
                     android:clipToPadding="true">
 
-                    <!-- Thin divider -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
@@ -453,6 +436,172 @@
                         android:text="Use %s as a placeholder for the current count"
                         android:textColor="#4B5563"
                         android:paddingStart="10dp"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Section: Timer -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:letterSpacing="0.15"
+            android:text="COUNTDOWN"
+            android:textColor="#6B7280"
+            android:textSize="11sp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            app:cardBackgroundColor="#1A1A1A"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#2563EB"
+                app:boxBackgroundColor="#1A1A1A"
+                app:hintTextColor="#6B7280"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCountdownValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Countdown in seconds(0 - none)"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberSigned"
+                    android:padding="16dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Section: Show Timer -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="#1A1A1A"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Countdown Interface Visibility"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchCountdownInterface"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Section: Beep Frequency -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="#1A1A1A"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Countdown beep frequency"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tvBeepFrequencyValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="360 Hz"
+                        android:textColor="#2563EB"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seekBarBeepFrequency"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="780"
+                    android:progress="360"
+                    android:progressTint="#2563EB"
+                    android:thumbTint="#2563EB" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="100 Hz (low)"
+                        android:textColor="#4B5563"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="880 Hz (high)"
+                        android:textColor="#4B5563"
                         android:textSize="11sp" />
 
                 </LinearLayout>

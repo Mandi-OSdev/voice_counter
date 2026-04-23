@@ -37,6 +37,7 @@ class SettingsActivity : AppCompatActivity() {
         "Polski"       to "pl-PL",
     )
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
@@ -102,21 +103,45 @@ class SettingsActivity : AppCompatActivity() {
             if (isSayResultExpanded) collapseSayResult() else expandSayResult()
         }
 
+        // ── Countdown Value ─────────────────────────────────────────────────
+        binding.etCountdownValue.setText(prefs.getInt("countdown_value", 3).toString())
+
+        // ── Countdown Switch ──────────────────────────────────────────────────
+        val countdownInterface = prefs.getBoolean("countdown_interface", false)
+        binding.switchCountdownInterface.isChecked = countdownInterface
+
+        // ── Beep Frequency SeekBar ──────────────────────────────────────────────
+        val savedFreq = prefs.getInt("beep_frequency", 360)
+        binding.seekBarBeepFrequency.progress = savedFreq - 100
+        binding.tvBeepFrequencyValue.text = "$savedFreq Hz"
+
+        binding.seekBarBeepFrequency.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                binding.tvBeepFrequencyValue.text = "${progress + 100} Hz"
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })
+
         // ── SpeechR Debug Mode ──────────────────────────────────────────────
         binding.switchDebugMode.isChecked = prefs.getBoolean("debug_mode", false)
 
         // ── Save Button ─────────────────────────────────────────────────────
         binding.btnSave.setOnClickListener {
-            val selectedLang   = languages[binding.spinnerLanguage.selectedItemPosition].second
-            val offline        = binding.switchOffline.isChecked
-            val confidence     = binding.seekBarConfidence.progress / 100f
-            val triggerWord    = binding.etTriggerWord.text.toString().trim()
-            val incrementText  = binding.etIncrementValue.text.toString().trim()
-            val increment      = incrementText.toIntOrNull() ?: 1
-            val sayResult      = binding.switchSayResult.isChecked
-            val sayResultText  = binding.etSayResultText.text.toString().trim()
+            val selectedLang       = languages[binding.spinnerLanguage.selectedItemPosition].second
+            val offline            = binding.switchOffline.isChecked
+            val confidence         = binding.seekBarConfidence.progress / 100f
+            val triggerWord        = binding.etTriggerWord.text.toString().trim()
+            val incrementText      = binding.etIncrementValue.text.toString().trim()
+            val increment          = incrementText.toIntOrNull() ?: 1
+            val sayResult          = binding.switchSayResult.isChecked
+            val sayResultText      = binding.etSayResultText.text.toString().trim()
                 .ifEmpty { "Clicked %s times already" }
-            val debugMode      = binding.switchDebugMode.isChecked
+            val countdownText      = binding.etCountdownValue.text.toString().trim()
+            val countdown          = countdownText.toIntOrNull() ?: 10
+            val countdownInterface = binding.switchCountdownInterface.isChecked
+            val beepFreq = binding.seekBarBeepFrequency.progress + 100
+            val debugMode          = binding.switchDebugMode.isChecked
 
             if (triggerWord.isEmpty()) {
                 binding.etTriggerWord.error = "Enter trigger-word"
@@ -131,6 +156,9 @@ class SettingsActivity : AppCompatActivity() {
                 putInt("increment_value",      increment)
                 putBoolean("say_result",       sayResult)
                 putString("say_result_text",   sayResultText)
+                putInt("countdown_value",      countdown)
+                putBoolean("countdown_interface",countdownInterface)
+                putInt("beep_frequency", beepFreq)
                 putBoolean("debug_mode",       debugMode)
             }
 
