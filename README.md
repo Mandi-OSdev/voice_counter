@@ -7,5 +7,6 @@ Just say the word—the app counts for you. That’s it.
 - Customizable result reader
 - Offline mode
 - Large full-screen counter
+- Pause countdown
 
-I looked for same sh*t —couldn’t find it. So I wrote it myself.
+I looked for same apps — couldn’t find it. So I wrote it myself, everything you need to not think, just work
